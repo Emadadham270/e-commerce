@@ -282,7 +282,7 @@ export default function Home() {
   return (
     <div className="p-8">
       <div className="bg-white shadow-md mb-8 p-4 rounded-lg">
-        <div className="flex justify-between items-center gap-4">
+        <div className="flex justify-between items-center gap-4 flex-col sm:flex-row">
           <h1 className="text-3xl font-bold text-blue-600">Dokany</h1>
 
           {/* Search bar */}
@@ -366,7 +366,7 @@ export default function Home() {
                 </button>
               ))}
               <div>
-                <h3 className="text-lg font-semibold mb-3">
+                <h3 className="text-lg font-semibold ">
                   Max Price: ${priceRange}
                 </h3>
                 <input
