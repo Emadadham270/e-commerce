@@ -1,3 +1,6 @@
+"use client";
+import React, { useState, useEffect } from "react";
+
 const ShoppingCart = ({ className }) => (
   <svg
     className={className}
@@ -106,6 +109,104 @@ const X = ({ className }) => (
   </svg>
 );
 
+// Reusable Button Component
+const Button = ({
+  variant = "primary",
+  size = "md",
+  children,
+  className = "",
+  ...props
+}) => {
+  const baseClasses =
+    "font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2";
+  const variants = {
+    primary:
+      "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg",
+    secondary:
+      "bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-300",
+    success: "bg-green-600 hover:bg-green-700 text-white shadow-md",
+    outline:
+      "border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white",
+  };
+  const sizes = {
+    sm: "px-3 py-1.5 text-sm",
+    md: "px-4 py-2 text-sm",
+    lg: "px-6 py-3 text-base",
+  };
+
+  return (
+    <a
+      className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
+      {...props}
+    >
+      {children}
+    </a>
+  );
+};
+
+//===============> fetching data from the api <=============\\
+
 export default function Home() {
-  return <main></main>;
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchProducts = async () => {
+    try {
+      console.log("Starting to fetch products...");
+
+      setLoading(true);
+
+      const response = await fetch("https://fakestoreapi.com/products");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch products");
+      }
+
+      const data = await response.json();
+      console.log("Products received:", data);
+
+      setProducts(data);
+      setError(null);
+    } catch (err) {
+      console.log("Error occurred:", err.message);
+      setError("Failed to load products. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  return (
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-8">E-Commerce Store</h1>
+
+      {loading && (
+        <div className="text-center">
+          <p className="text-xl">Loading products...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="text-center text-red-600">
+          <p className="text-xl">{error}</p>
+          <button
+            onClick={fetchProducts}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div>
+          <p className="mb-4">Found {products.length} products!</p>
+        </div>
+      )}
+    </div>
+  );
 }
