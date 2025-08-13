@@ -180,6 +180,7 @@ export default function Home() {
     fetchProducts();
   }, []);
 
+  const formatPrice = (price) => `$${price.toFixed(2)}`;
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-8">E-Commerce Store</h1>
@@ -205,6 +206,22 @@ export default function Home() {
       {!loading && !error && (
         <div>
           <p className="mb-4">Found {products.length} products!</p>
+
+          <div className="space-y-4">
+            {products.map((product) => (
+              <div key={product.id} className="border-b border-gray-200 pb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {product.title}
+                </h3>
+                <p className="text-xl font-bold text-blue-600 mt-2">
+                  {formatPrice(product.price)}
+                </p>
+                <p className="text-sm text-gray-600 capitalize mt-1">
+                  Category: {product.category}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
