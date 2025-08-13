@@ -150,23 +150,33 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
+  useEffect(() => {
+    if (searchTerm === "") {
+      setFilteredProducts(products);
+    } else {
+      const filtered = products.filter(
+        (product) =>
+          product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    }
+  }, [products, searchTerm]);
   const fetchProducts = async () => {
     try {
       console.log("Starting to fetch products...");
-
       setLoading(true);
-
       const response = await fetch("https://fakestoreapi.com/products");
-
       if (!response.ok) {
         throw new Error("Failed to fetch products");
       }
-
       const data = await response.json();
       console.log("Products received:", data);
-
       setProducts(data);
+      setFilteredProducts(data);
       setError(null);
     } catch (err) {
       console.log("Error occurred:", err.message);
@@ -248,6 +258,44 @@ export default function Home() {
   };
   return (
     <div className="p-8">
+      <div className="bg-white shadow-md mb-8 p-4 rounded-lg">
+        <div className="flex justify-between items-center gap-4">
+          <h1 className="text-3xl font-bold text-blue-600">E-Commerce Store</h1>
+
+          {/* Search bar */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {/* Cart */}
+          <div className="relative">
+            <Button variant="outline">
+              <ShoppingCart className="w-5 h-5" />
+              <span>Cart</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-medium">
+                  {cartCount}
+                </span>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
       {loading && (
         <div className="text-center">
           <p className="text-xl">Loading products...</p>
@@ -268,33 +316,37 @@ export default function Home() {
 
       {!loading && !error && (
         <div>
-          <header className="bg-white shadow-md mb-8 p-4">
-            <div className="flex justify-between items-center">
-              <h1 className="text-3xl font-bold">E-Commerce Store</h1>
+          {/* Show search results info */}
+          <p className="mb-4">
+            {searchTerm
+              ? `Found ${filteredProducts.length} products matching "${searchTerm}"`
+              : `Found ${filteredProducts.length} products!`}
+          </p>
 
-              <div className="relative">
-                <Button variant="outline">
-                  <ShoppingCart className="w-5 h-5" />
-                  <span>Cart</span>
-                  {cartCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-medium">
-                      {cartCount}
-                    </span>
-                  )}
-                </Button>
-              </div>
+          {filteredProducts.length === 0 ? (
+            /* No products found message */
+            <div className="text-center py-12">
+              <div className="text-gray-400 text-6xl mb-4">🔍</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No products found
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Try searching with different keywords
+              </p>
+              <Button onClick={() => setSearchTerm("")}>Clear Search</Button>
             </div>
-          </header>
-          <p className="mb-4">Found {products.length} products!</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={handleAddToCart}
-              />
-            ))}
-          </div>
+          ) : (
+            /* Display filtered products */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
