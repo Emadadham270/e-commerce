@@ -248,8 +248,6 @@ export default function Home() {
   };
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-8">E-Commerce Store</h1>
-
       {loading && (
         <div className="text-center">
           <p className="text-xl">Loading products...</p>
