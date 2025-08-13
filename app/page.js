@@ -181,6 +181,52 @@ export default function Home() {
   }, []);
 
   const formatPrice = (price) => `$${price.toFixed(2)}`;
+  const ProductCard = ({ product }) => {
+    const formatPrice = (price) => {
+      return `$${price.toFixed(2)}`;
+    };
+
+    const truncateText = (text, maxLength) => {
+      if (text.length <= maxLength) return text;
+      return text.substring(0, maxLength) + "...";
+    };
+
+    return (
+      <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        {/* Product Image */}
+        <div className="h-64 bg-gray-100 flex items-center justify-center">
+          <img
+            src={`${product.image}`}
+            alt={product.title}
+            className="h-full w-full object-contain p-4"
+          />
+        </div>
+
+        {/* Product Info */}
+        <div className="p-6">
+          <div className="mb-2">
+            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium capitalize">
+              {product.category}
+            </span>
+          </div>
+
+          <h3 className="font-semibold text-gray-900 text-lg mb-2">
+            {truncateText(product.title, 50)}
+          </h3>
+
+          <p className="text-gray-600 text-sm mb-4">
+            {truncateText(product.description, 100)}
+          </p>
+
+          <div className="flex items-center justify-between">
+            <span className="text-2xl font-bold text-blue-600">
+              {formatPrice(product.price)}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  };
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-8">E-Commerce Store</h1>
@@ -209,17 +255,7 @@ export default function Home() {
 
           <div className="space-y-4">
             {products.map((product) => (
-              <div key={product.id} className="border-b border-gray-200 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {product.title}
-                </h3>
-                <p className="text-xl font-bold text-blue-600 mt-2">
-                  {formatPrice(product.price)}
-                </p>
-                <p className="text-sm text-gray-600 capitalize mt-1">
-                  Category: {product.category}
-                </p>
-              </div>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
