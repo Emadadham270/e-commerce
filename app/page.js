@@ -109,7 +109,6 @@ const X = ({ className }) => (
   </svg>
 );
 
-// Reusable Button Component
 const Button = ({
   variant = "primary",
   size = "md",
@@ -144,39 +143,65 @@ const Button = ({
   );
 };
 
-//===============> fetching data from the api <=============\\
-
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
-
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [priceRange, setPriceRange] = useState(1000);
   useEffect(() => {
-    if (searchTerm === "") {
-      setFilteredProducts(products);
-    } else {
-      const filtered = products.filter(
+    let filtered = products;
+
+    // Filter by search term
+    if (searchTerm !== "") {
+      filtered = filtered.filter(
         (product) =>
           product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           product.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setFilteredProducts(filtered);
     }
-  }, [products, searchTerm]);
+
+    // Filter by category
+    if (selectedCategory !== "") {
+      filtered = filtered.filter(
+        (product) => product.category === selectedCategory
+      );
+    }
+
+    // Filter by price
+    filtered = filtered.filter((product) => product.price <= priceRange);
+
+    setFilteredProducts(filtered);
+  }, [products, searchTerm, selectedCategory, priceRange]);
+
+  //===============> fetching data from the api <=============\\
+
   const fetchProducts = async () => {
     try {
       console.log("Starting to fetch products...");
       setLoading(true);
-      const response = await fetch("https://fakestoreapi.com/products");
-      if (!response.ok) {
-        throw new Error("Failed to fetch products");
+
+      const [productsResponse, categoriesResponse] = await Promise.all([
+        fetch("https://fakestoreapi.com/products"),
+        fetch("https://fakestoreapi.com/products/categories"),
+      ]);
+
+      if (!productsResponse.ok || !categoriesResponse.ok) {
+        throw new Error("Failed to fetch data");
       }
-      const data = await response.json();
-      console.log("Products received:", data);
-      setProducts(data);
-      setFilteredProducts(data);
+
+      const productsData = await productsResponse.json();
+      const categoriesData = await categoriesResponse.json();
+
+      console.log("Products received:", productsData);
+      console.log("Categories received:", categoriesData);
+
+      setProducts(productsData);
+      setCategories(categoriesData);
+      setFilteredProducts(productsData);
       setError(null);
     } catch (err) {
       console.log("Error occurred:", err.message);
@@ -185,14 +210,12 @@ export default function Home() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchProducts();
   }, []);
 
   const [cartCount, setCartCount] = useState(0);
 
-  // 2. Add cart handler function (add this with your other functions)
   const handleAddToCart = (product) => {
     setCartCount((prev) => prev + 1);
     console.log(
@@ -260,7 +283,7 @@ export default function Home() {
     <div className="p-8">
       <div className="bg-white shadow-md mb-8 p-4 rounded-lg">
         <div className="flex justify-between items-center gap-4">
-          <h1 className="text-3xl font-bold text-blue-600">E-Commerce Store</h1>
+          <h1 className="text-3xl font-bold text-blue-600">Dokany</h1>
 
           {/* Search bar */}
           <div className="relative flex-1 max-w-md">
@@ -316,6 +339,51 @@ export default function Home() {
 
       {!loading && !error && (
         <div>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3">Filter by Category:</h3>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedCategory("")}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === ""
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                All Categories
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition-colors ${
+                    selectedCategory === category
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">
+                  Max Price: ${priceRange}
+                </h3>
+                <input
+                  type="range"
+                  min="0"
+                  max="1000"
+                  value={priceRange}
+                  onChange={(e) => setPriceRange(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                />
+                <div className="flex justify-between text-sm text-gray-500 mt-1">
+                  <span>$0</span>
+                  <span>$1000</span>
+                </div>
+              </div>
+            </div>
+          </div>
           {/* Show search results info */}
           <p className="mb-4">
             {searchTerm
