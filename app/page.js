@@ -180,8 +180,17 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  const formatPrice = (price) => `$${price.toFixed(2)}`;
-  const ProductCard = ({ product }) => {
+  const [cartCount, setCartCount] = useState(0);
+
+  // 2. Add cart handler function (add this with your other functions)
+  const handleAddToCart = (product) => {
+    setCartCount((prev) => prev + 1);
+    console.log(
+      `Added ${product.title} to cart. Total items: ${cartCount + 1}`
+    );
+  };
+
+  const ProductCard = ({ product, onAddToCart }) => {
     const formatPrice = (price) => {
       return `$${price.toFixed(2)}`;
     };
@@ -198,7 +207,7 @@ export default function Home() {
           <img
             src={`${product.image}`}
             alt={product.title}
-            className="h-full w-full object-contain p-4"
+            className="h-full w-full object-contain p-4 hover:scale-105 transition-all duration-500	"
           />
         </div>
 
@@ -222,6 +231,16 @@ export default function Home() {
             <span className="text-2xl font-bold text-blue-600">
               {formatPrice(product.price)}
             </span>
+          </div>
+          <div className="flex gap-2 pt-4">
+            <Button
+              variant="primary"
+              className="flex-1"
+              onClick={() => onAddToCart(product)}
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Add to Cart
+            </Button>
           </div>
         </div>
       </div>
@@ -251,11 +270,31 @@ export default function Home() {
 
       {!loading && !error && (
         <div>
-          <p className="mb-4">Found {products.length} products!</p>
+          <header className="bg-white shadow-md mb-8 p-4">
+            <div className="flex justify-between items-center">
+              <h1 className="text-3xl font-bold">E-Commerce Store</h1>
 
-          <div className="space-y-4">
+              <div className="relative">
+                <Button variant="outline">
+                  <ShoppingCart className="w-5 h-5" />
+                  <span>Cart</span>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-medium">
+                      {cartCount}
+                    </span>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </header>
+          <p className="mb-4">Found {products.length} products!</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+              />
             ))}
           </div>
         </div>

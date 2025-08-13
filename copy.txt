@@ -1,0 +1,333 @@
+React E-Commerce Project - Step-by-Step Tasks
+🎯 Task-Based Learning Path
+Complete each task in order. Don't move to the next task until the current one is working!
+
+✅ Task 1: Project Setup & Basic Structure
+Goal: Get a basic React app running with Tailwind CSS
+What to do:
+
+Create a new Next.js project
+Install Tailwind CSS
+Create a simple page that displays "Hello E-Commerce App!"
+Make sure the dev server runs without errors
+
+Files to create/modify:
+
+app/page.js - Main page component
+app/globals.css - Add Tailwind directives
+
+Success criteria:
+
+✅ App runs on http://localhost:3000
+✅ Page shows your text
+✅ No console errors
+
+
+✅ Task 2: Create Basic Icons
+Goal: Create simple SVG icon components
+What to do:
+
+Create icon components: ShoppingCart, Eye, Star, Search
+Test each icon by displaying it on your page
+Make sure icons are responsive (change size with className)
+
+Code structure:
+javascriptconst ShoppingCart = ({ className }) => (
+  <svg className={className} /* SVG code here */>
+);
+Success criteria:
+
+✅ All 4 icons display correctly
+✅ Icons change size when you add w-8 h-8 vs w-4 h-4
+✅ Icons are visible and look like their intended shape
+
+
+✅ Task 3: Build Reusable Button Component
+Goal: Create a flexible button that can look different based on props
+What to do:
+
+Create a Button component that accepts variant, size, and children
+Add different styles for primary, secondary variants
+Add different sizes: sm, md, lg
+Test with different combinations
+
+Example usage:
+javascript<Button variant="primary" size="lg">Add to Cart</Button>
+<Button variant="secondary" size="sm">Cancel</Button>
+Success criteria:
+
+✅ Primary button is blue, secondary is gray
+✅ Different sizes work correctly
+✅ Button content (text/icons) displays properly
+✅ Hover effects work
+
+
+✅ Task 4: Fetch Data from API
+Goal: Get product data from the Fake Store API
+What to do:
+
+Use useState to store products and loading state
+Use useEffect to fetch data when component loads
+Display "Loading..." while fetching
+Display "Error" if fetch fails
+Console.log the data to see what you get
+
+API endpoints:
+
+Products: https://fakestoreapi.com/products
+Categories: https://fakestoreapi.com/products/categories
+
+Success criteria:
+
+✅ Data loads when page opens
+✅ Loading state shows initially
+✅ Product data appears in console
+✅ Error handling works (test by using wrong URL)
+
+
+✅ Task 5: Display Products in Simple List
+Goal: Show product information in a basic layout
+What to do:
+
+Create a simple list that shows each product's:
+
+Title
+Price (formatted as $X.XX)
+Category
+
+
+Use map() to loop through products
+Don't worry about images or fancy styling yet
+
+Success criteria:
+
+✅ All products display in a vertical list
+✅ Each product shows title, price, category
+✅ Prices are formatted correctly (e.g., $15.50)
+✅ No "undefined" or missing data
+
+
+✅ Task 6: Create Product Card Component
+Goal: Make each product look like a professional card
+What to do:
+
+Create a ProductCard component
+Add product image, title, price, description
+Style it with Tailwind CSS (white background, shadow, rounded corners)
+Limit description text length (add "..." if too long)
+
+Design requirements:
+
+White background with shadow
+Product image at the top
+Title, price, and description below
+Rounded corners
+Consistent card size
+
+Success criteria:
+
+✅ Products display in card format
+✅ Images load correctly
+✅ Long descriptions are truncated
+✅ Cards look consistent and professional
+
+
+✅ Task 7: Add Grid Layout & Responsive Design
+Goal: Make products display in a grid that adapts to screen size
+What to do:
+
+Use CSS Grid classes: grid, grid-cols-1, sm:grid-cols-2, lg:grid-cols-3
+Add proper spacing with gap-6
+Test on different screen sizes (use browser dev tools)
+
+Grid behavior:
+
+Mobile: 1 column
+Tablet: 2 columns
+Desktop: 3 columns
+
+Success criteria:
+
+✅ Products display in grid format
+✅ Grid adapts to different screen sizes
+✅ Proper spacing between cards
+✅ Layout looks good on mobile and desktop
+
+
+✅ Task 8: Add Shopping Cart Functionality
+Goal: Let users add items to cart and see cart count
+What to do:
+
+Add cartCount state to track total items
+Add "Add to Cart" button to each product card
+When clicked, increase cart count by 1
+Display cart count in header/navigation
+Add shopping cart icon with count badge
+
+Success criteria:
+
+✅ "Add to Cart" button on each product
+✅ Cart count increases when button clicked
+✅ Cart count displays in header
+✅ Count shows as badge/number on cart icon
+
+
+✅ Task 9: Implement Search Functionality
+Goal: Let users search for products by name
+What to do:
+
+Add search input field in header
+Create searchTerm state
+Filter products based on search term
+Update display to show filtered results
+Show "No products found" when search returns empty
+
+Search should work on:
+
+Product title
+Product description (optional)
+
+Success criteria:
+
+✅ Search input appears in header
+✅ Typing filters products in real-time
+✅ Search is case-insensitive
+✅ Clearing search shows all products again
+
+
+✅ Task 10: Add Category Filter
+Goal: Let users filter products by category
+What to do:
+
+Create a sidebar with category options
+Fetch categories from API
+Add radio buttons or clickable category list
+Filter products when category is selected
+Add "All Categories" option
+
+Success criteria:
+
+✅ Category list displays all available categories
+✅ Clicking category filters products
+✅ "All Categories" shows all products
+✅ Only one category can be selected at a time
+
+
+✅ Task 11: Add Price Range Filter
+Goal: Let users filter by maximum price
+What to do:
+
+Add price range slider to sidebar
+Create priceRange state
+Filter products where price <= selected range
+Show current max price value
+Combine with existing search and category filters
+
+Success criteria:
+
+✅ Price slider works smoothly
+✅ Current max price displays above slider
+✅ Products filter based on price
+✅ Works together with search and category filters
+
+
+✅ Task 12: Add Sorting Options
+Goal: Let users sort products by different criteria
+What to do:
+
+Add dropdown with sort options:
+
+Default (original order)
+Price: Low to High
+Price: High to Low
+Name (A-Z)
+Rating (if available)
+
+
+Implement sorting logic
+Apply sorting after filtering
+
+Success criteria:
+
+✅ Sort dropdown appears near product grid
+✅ All sort options work correctly
+✅ Sorting applies to filtered results
+✅ Sort persists when filters change
+
+
+✅ Task 13: Add Loading States
+Goal: Improve user experience with loading indicators
+What to do:
+
+Create skeleton/placeholder cards for loading
+Show skeletons while API data loads
+Add loading state for images
+Handle image loading errors with fallback
+
+Success criteria:
+
+✅ Skeleton cards show before data loads
+✅ Images fade in when loaded
+✅ Broken images show placeholder
+✅ Loading states look professional
+
+
+✅ Task 14: Make Mobile-Friendly
+Goal: Optimize for mobile devices
+What to do:
+
+Make filter sidebar collapsible on mobile
+Add mobile menu button
+Ensure touch targets are large enough
+Test all functionality on mobile screen sizes
+Add mobile search bar
+
+Success criteria:
+
+✅ Filters work well on mobile
+✅ All buttons are easy to tap
+✅ Layout looks good on phone screens
+✅ Navigation is intuitive on mobile
+
+
+✅ Task 15: Add Final Polish
+Goal: Make the app production-ready
+What to do:
+
+Add proper error handling for API failures
+Add "View Details" button (can show alert for now)
+Improve animations and hover effects
+Add star ratings display
+Test everything thoroughly
+
+Success criteria:
+
+✅ App handles network errors gracefully
+✅ All interactions feel smooth
+✅ No console errors
+✅ App looks professional and complete
+
+
+🎯 Completion Checklist
+When you finish all tasks, your app should have:
+
+✅ Product Display: Cards with images, prices, descriptions
+✅ Search: Real-time product search
+✅ Filters: Category and price filtering
+✅ Sorting: Multiple sort options
+✅ Shopping Cart: Add items and track count
+✅ Responsive Design: Works on all devices
+✅ Professional UI: Clean, modern design
+✅ Error Handling: Graceful failure handling
+✅ Performance: Fast loading with good UX
+
+
+💡 Tips for Success
+
+One task at a time - Don't rush ahead
+Test frequently - Make sure each piece works before moving on
+Use browser dev tools - Inspect elements and check console
+Google when stuck - Look up specific Tailwind classes or React concepts
+Ask for help - Come back here when you need guidance on any task
+
+Ready to start? Begin with Task 1! 🚀
