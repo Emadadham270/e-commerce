@@ -17,6 +17,22 @@ const ShoppingCart = ({ className }) => (
   </svg>
 );
 
+const ArrowLeft = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M15 19l-7-7 7-7"
+    />
+  </svg>
+);
+
 const Eye = ({ className }) => (
   <svg
     className={className}
@@ -42,22 +58,6 @@ const Eye = ({ className }) => (
 const Star = ({ className }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 20 20">
     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-  </svg>
-);
-
-const Filter = ({ className }) => (
-  <svg
-    className={className}
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-    />
   </svg>
 );
 
@@ -152,6 +152,11 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [priceRange, setPriceRange] = useState(1000);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const handleViewProduct = (product) => {
+    setSelectedProduct(product);
+  };
   useEffect(() => {
     let filtered = products;
 
@@ -223,7 +228,7 @@ export default function Home() {
     );
   };
 
-  const ProductCard = ({ product, onAddToCart }) => {
+  const ProductCard = ({ product, onAddToCart, onViewProduct }) => {
     const formatPrice = (price) => {
       return `$${price.toFixed(2)}`;
     };
@@ -236,12 +241,25 @@ export default function Home() {
     return (
       <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
         {/* Product Image */}
-        <div className="h-64 bg-gray-100 flex items-center justify-center">
+        <div className="h-64 bg-gray-100 flex items-center justify-center relative group">
           <img
-            src={`${product.image}`}
+            src={product.imag}
             alt={product.title}
-            className="h-full w-full object-contain p-4 hover:scale-105 transition-all duration-500	"
+            className="h-full w-full object-contain p-4 hover:scale-105 transition-all duration-500"
           />
+
+          {/* View Details Button - appears on hover */}
+          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => onViewProduct(product)}
+              className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all duration-300"
+            >
+              <Eye className="w-4 h-4" />
+              View Details
+            </Button>
+          </div>
         </div>
 
         {/* Product Info */}
@@ -256,16 +274,30 @@ export default function Home() {
             {truncateText(product.title, 50)}
           </h3>
 
-          <p className="text-gray-600 text-sm mb-4">
+          <p className="text-gray-600 text-sm mb-3">
             {truncateText(product.description, 100)}
           </p>
 
-          <div className="flex items-center justify-between">
+          {/* Star Rating */}
+          <div className="mb-3">
+            <StarRating rating={product.rating?.rate || 4.5} />
+          </div>
+
+          <div className="flex items-center justify-between mb-4">
             <span className="text-2xl font-bold text-blue-600">
               {formatPrice(product.price)}
             </span>
           </div>
-          <div className="flex gap-2 pt-4">
+
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => onViewProduct(product)}
+              className="flex-shrink-0"
+            >
+              <Eye className="w-4 h-4" />
+            </Button>
             <Button
               variant="primary"
               className="flex-1"
@@ -276,6 +308,144 @@ export default function Home() {
             </Button>
           </div>
         </div>
+      </div>
+    );
+  };
+
+  const ProductDetails = ({ product, onClose, onAddToCart }) => {
+    const formatPrice = (price) => {
+      return `$${price.toFixed(2)}`;
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b">
+            <Button
+              variant="secondary"
+              onClick={onClose}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Products
+            </Button>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Product Content */}
+          <div className="p-6">
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Product Image */}
+              <div className="bg-gray-50 rounded-lg p-8 flex items-center justify-center">
+                <img
+                  src={product.image}
+                  alt={product.title}
+                  className="max-w-full max-h-96 object-contain"
+                />
+              </div>
+
+              {/* Product Info */}
+              <div>
+                <div className="mb-4">
+                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium capitalize">
+                    {product.category}
+                  </span>
+                </div>
+
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                  {product.title}
+                </h1>
+
+                <div className="mb-4">
+                  <StarRating
+                    rating={product.rating?.rate || 4.5}
+                    size="w-5 h-5"
+                  />
+                  <p className="text-sm text-gray-600 mt-1">
+                    {product.rating?.count || 120} reviews
+                  </p>
+                </div>
+
+                <div className="mb-6">
+                  <span className="text-4xl font-bold text-blue-600">
+                    {formatPrice(product.price)}
+                  </span>
+                </div>
+
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Description</h3>
+                  <p className="text-gray-700 leading-relaxed">
+                    {product.description}
+                  </p>
+                </div>
+
+                <div className="flex gap-4">
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    onClick={() => onAddToCart(product)}
+                    className="flex-1"
+                  >
+                    <ShoppingCart className="w-5 h-5" />
+                    Add to Cart
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const StarRating = ({ rating, maxStars = 5, size = "w-4 h-4" }) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = maxStars - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className="flex items-center gap-1">
+        {/* Full stars */}
+        {Array(fullStars)
+          .fill()
+          .map((_, i) => (
+            <Star
+              key={`full-${i}`}
+              className={`${size} text-yellow-400`}
+              filled={true}
+            />
+          ))}
+
+        {/* Half star */}
+        {hasHalfStar && (
+          <div className="relative">
+            <Star className={`${size} text-gray-300`} filled={true} />
+            <div className="absolute inset-0 overflow-hidden w-1/2">
+              <Star className={`${size} text-yellow-400`} filled={true} />
+            </div>
+          </div>
+        )}
+
+        {/* Empty stars */}
+        {Array(emptyStars)
+          .fill()
+          .map((_, i) => (
+            <Star
+              key={`empty-${i}`}
+              className={`${size} text-gray-300`}
+              filled={true}
+            />
+          ))}
+
+        <span className="text-sm text-gray-600 ml-1">
+          ({rating.toFixed(1)})
+        </span>
       </div>
     );
   };
@@ -411,11 +581,19 @@ export default function Home() {
                   key={product.id}
                   product={product}
                   onAddToCart={handleAddToCart}
+                  onViewProduct={handleViewProduct}
                 />
               ))}
             </div>
           )}
         </div>
+      )}
+      {selectedProduct && (
+        <ProductDetails
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onAddToCart={handleAddToCart}
+        />
       )}
     </div>
   );
