@@ -498,7 +498,9 @@ export default function Home() {
       {!loading && !error && (
         <div>
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3">Filter by Category:</h3>
+            <h3 className="flex flex-wrap justify-start text-lg font-semibold mb-3">
+              Filter by Category:
+            </h3>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedCategory("")}
@@ -523,22 +525,22 @@ export default function Home() {
                   {category}
                 </button>
               ))}
-              <div>
-                <h3 className="text-lg font-semibold ">
-                  Max Price: ${priceRange}
-                </h3>
-                <input
-                  type="range"
-                  min="0"
-                  max="1000"
-                  value={priceRange}
-                  onChange={(e) => setPriceRange(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                />
-                <div className="flex justify-between text-sm text-gray-500 mt-1">
-                  <span>$0</span>
-                  <span>$1000</span>
-                </div>
+            </div>
+            <div className="justify-self-start">
+              <h3 className="text-lg font-semibold ">
+                Max Price: ${priceRange}
+              </h3>
+              <input
+                type="range"
+                min="0"
+                max="1000"
+                value={priceRange}
+                onChange={(e) => setPriceRange(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              />
+              <div className="flex justify-between text-sm text-gray-500 mt-1">
+                <span>$0</span>
+                <span>$1000</span>
               </div>
             </div>
           </div>
