@@ -450,7 +450,7 @@ export default function Home() {
     );
   };
   return (
-    <div className="p-8">
+    <div className="p-8 bg-white">
       <div className="bg-white shadow-md mb-8 p-4 rounded-lg">
         <div className="flex justify-between items-center gap-4 flex-col sm:flex-row">
           <h1 className="text-3xl font-bold text-blue-600">Dokany</h1>
