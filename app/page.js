@@ -117,7 +117,7 @@ const Button = ({
   ...props
 }) => {
   const baseClasses =
-    "font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2";
+    "font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer";
   const variants = {
     primary:
       "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg",
@@ -134,12 +134,12 @@ const Button = ({
   };
 
   return (
-    <a
+    <button
       className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
       {children}
-    </a>
+    </button>
   );
 };
 
@@ -241,25 +241,13 @@ export default function Home() {
     return (
       <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
         {/* Product Image */}
-        <div className="h-64 bg-gray-100 flex items-center justify-center relative group">
+        <div className="h-64 bg-gray-100 flex items-center justify-center">
           <img
-            src={product.imag}
+            src={product.image}
             alt={product.title}
-            className="h-full w-full object-contain p-4 hover:scale-105 transition-all duration-500"
+            className="h-full w-full object-contain p-4"
+            loading="lazy"
           />
-
-          {/* View Details Button - appears on hover */}
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => onViewProduct(product)}
-              className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all duration-300"
-            >
-              <Eye className="w-4 h-4" />
-              View Details
-            </Button>
-          </div>
         </div>
 
         {/* Product Info */}
