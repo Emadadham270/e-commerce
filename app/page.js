@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useAuth } from "./context/AuthContext";
 
 const ShoppingCart = ({ className }) => (
   <svg
@@ -144,6 +146,7 @@ const Button = ({
 };
 
 export default function Home() {
+  const { user, addToCart, getCartCount, logout } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -165,14 +168,14 @@ export default function Home() {
       filtered = filtered.filter(
         (product) =>
           product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchTerm.toLowerCase())
+          product.description.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     // Filter by category
     if (selectedCategory !== "") {
       filtered = filtered.filter(
-        (product) => product.category === selectedCategory
+        (product) => product.category === selectedCategory,
       );
     }
 
@@ -219,13 +222,16 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  const [cartCount, setCartCount] = useState(0);
+  const cartCount = getCartCount();
 
   const handleAddToCart = (product) => {
-    setCartCount((prev) => prev + 1);
-    console.log(
-      `Added ${product.title} to cart. Total items: ${cartCount + 1}`
-    );
+    if (!user) {
+      // Redirect to login if not logged in
+      window.location.href = "/login";
+      return;
+    }
+    addToCart(product.id);
+    console.log(`Added ${product.title} to cart.`);
   };
 
   const ProductCard = ({ product, onAddToCart, onViewProduct }) => {
@@ -463,17 +469,49 @@ export default function Home() {
             )}
           </div>
 
-          {/* Cart */}
-          <div className="relative">
-            <Button variant="outline">
-              <ShoppingCart className="w-5 h-5" />
-              <span>Cart</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-medium">
-                  {cartCount}
+          {/* User Actions */}
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                <span className="text-gray-600 hidden md:block">
+                  Hi, {user.name.split(" ")[0]}
                 </span>
-              )}
-            </Button>
+                <button
+                  onClick={logout}
+                  className="text-gray-600 hover:text-gray-800 text-sm font-medium"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                >
+                  Register
+                </Link>
+              </>
+            )}
+
+            {/* Cart */}
+            <Link href="/cart" className="relative">
+              <Button variant="outline">
+                <ShoppingCart className="w-5 h-5" />
+                <span>Cart</span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-medium">
+                    {cartCount}
+                  </span>
+                )}
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
