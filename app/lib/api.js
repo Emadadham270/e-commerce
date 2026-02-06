@@ -1,5 +1,25 @@
 const API_BASE_URL = "http://localhost:3002";
 
+// Helper to get auth token from localStorage
+const getAuthToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("dokany_token");
+  }
+  return null;
+};
+
+// Helper to create headers with auth token
+const getAuthHeaders = () => {
+  const token = getAuthToken();
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+};
+
 // User API calls
 export const userApi = {
   register: async (userData) => {
@@ -13,6 +33,10 @@ export const userApi = {
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.data?.message || "Registration failed");
+    }
+    // Store token if present
+    if (data.data?.token) {
+      localStorage.setItem("dokany_token", data.data.token);
     }
     return data;
   },
@@ -29,11 +53,17 @@ export const userApi = {
     if (!response.ok) {
       throw new Error(data.data?.message || "Login failed");
     }
+    // Store token if present
+    if (data.data?.token) {
+      localStorage.setItem("dokany_token", data.data.token);
+    }
     return data;
   },
 
   getUser: async (userId) => {
-    const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+      headers: getAuthHeaders(),
+    });
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.data?.message || "Failed to get user");
@@ -44,9 +74,7 @@ export const userApi = {
   updateUser: async (userId, updates) => {
     const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(updates),
     });
     const data = await response.json();
@@ -55,12 +83,19 @@ export const userApi = {
     }
     return data;
   },
+
+  logout: () => {
+    localStorage.removeItem("dokany_token");
+    localStorage.removeItem("dokany_user");
+  },
 };
 
 // Cart (Chart) API calls
 export const cartApi = {
   getCart: async (cartId) => {
-    const response = await fetch(`${API_BASE_URL}/charts/${cartId}`);
+    const response = await fetch(`${API_BASE_URL}/charts/${cartId}`, {
+      headers: getAuthHeaders(),
+    });
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.data?.message || "Failed to get cart");
@@ -71,9 +106,7 @@ export const cartApi = {
   updateCart: async (cartId, products) => {
     const response = await fetch(`${API_BASE_URL}/charts/${cartId}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ products }),
     });
     const data = await response.json();
@@ -84,7 +117,9 @@ export const cartApi = {
   },
 
   getAllCarts: async () => {
-    const response = await fetch(`${API_BASE_URL}/charts`);
+    const response = await fetch(`${API_BASE_URL}/charts`, {
+      headers: getAuthHeaders(),
+    });
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.data?.message || "Failed to get carts");

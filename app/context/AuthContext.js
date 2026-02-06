@@ -54,6 +54,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     setCart([]);
     localStorage.removeItem("dokany_user");
+    localStorage.removeItem("dokany_token");
   };
 
   const addToCart = async (productId) => {
