@@ -14,9 +14,10 @@ export function AuthProvider({ children }) {
     const storedUser = localStorage.getItem("dokany_user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
+      const normalizedUser = { ...parsedUser, role: parsedUser.role || "user" };
+      setUser(normalizedUser);
       // Load cart from backend
-      loadCart(parsedUser.cartId);
+      loadCart(normalizedUser.cartId);
     }
     setLoading(false);
   }, []);

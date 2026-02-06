@@ -476,6 +476,14 @@ export default function Home() {
                 <span className="text-gray-600 hidden md:block">
                   Hi, {user.name.split(" ")[0]}
                 </span>
+                {user.role === "admin" && (
+                  <Link
+                    href="/admin/users"
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    Admin Panel
+                  </Link>
+                )}
                 <button
                   onClick={logout}
                   className="text-gray-600 hover:text-gray-800 text-sm font-medium"

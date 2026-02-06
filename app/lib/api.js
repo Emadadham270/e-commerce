@@ -84,6 +84,29 @@ export const userApi = {
     return data;
   },
 
+  getAllUsers: async () => {
+    const response = await fetch(`${API_BASE_URL}/users`, {
+      headers: getAuthHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.data?.message || "Failed to fetch users");
+    }
+    return data;
+  },
+
+  deleteUser: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.data?.message || "Failed to delete user");
+    }
+    return data;
+  },
+
   logout: () => {
     localStorage.removeItem("dokany_token");
     localStorage.removeItem("dokany_user");
