@@ -163,7 +163,6 @@ export default function Home() {
   useEffect(() => {
     let filtered = products;
 
-    // Filter by search term
     if (searchTerm !== "") {
       filtered = filtered.filter(
         (product) =>
